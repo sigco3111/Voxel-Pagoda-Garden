@@ -41,7 +41,7 @@ scene.fog = new THREE.Fog(0xf2f4ef, 90, 190);
 
 /* ---------------------------- camera ------------------------------ */
 
-const HOME_POS = new THREE.Vector3(31, 23, 35);
+const HOME_POS = new THREE.Vector3(36, 26, 40);
 const HOME_TARGET = new THREE.Vector3(0, 10, 0);
 
 const camera = new THREE.PerspectiveCamera(
@@ -57,7 +57,7 @@ controls.target.copy(HOME_TARGET);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
 controls.minDistance = 14;
-controls.maxDistance = 95;
+controls.maxDistance = 110;
 controls.maxPolarAngle = Math.PI * 0.49;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.6;
@@ -68,7 +68,7 @@ const VIEWS = {
   overview: { p: HOME_POS, t: HOME_TARGET },
   pagoda: { p: new THREE.Vector3(13, 17, 26), t: new THREE.Vector3(0, 12, 1) },
   pond: { p: new THREE.Vector3(25, 13, 0), t: new THREE.Vector3(14, 1, -10) },
-  gate: { p: new THREE.Vector3(0, 6, 34), t: new THREE.Vector3(0, 7, 4) },
+  gate: { p: new THREE.Vector3(0, 6, 38), t: new THREE.Vector3(0, 7, 4) },
 };
 
 const camTween = {
@@ -110,7 +110,7 @@ renderer.domElement.addEventListener('pointerdown', () => {
 });
 
 // cinematic intro glide from high above
-camera.position.set(58, 42, 64);
+camera.position.set(66, 46, 72);
 controls.target.copy(HOME_TARGET);
 flyTo(HOME_POS, HOME_TARGET, 2.8);
 
@@ -123,7 +123,7 @@ const sun = new THREE.DirectionalLight(0xfff0da, 1.9);
 sun.position.set(36, 50, 24);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-const S = 36;
+const S = 40;
 sun.shadow.camera.left = -S;
 sun.shadow.camera.right = S;
 sun.shadow.camera.top = S;

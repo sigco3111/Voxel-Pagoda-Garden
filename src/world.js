@@ -93,13 +93,13 @@ function fillBox(x0, y0, z0, x1, y1, z1, color) {
 /* Terrain: grass island, stone path and koi pond                     */
 /* ------------------------------------------------------------------ */
 
-const GROUND = 20;
+const GROUND = 24;
 
 // rounded-square island mask (cuts the four corners diagonally)
 function inIsland(x, z, inset = 0) {
   return (
     Math.max(Math.abs(x), Math.abs(z)) <= GROUND - inset &&
-    Math.abs(x) + Math.abs(z) <= 36 - inset * 2
+    Math.abs(x) + Math.abs(z) <= 44 - inset * 2
   );
 }
 
@@ -110,7 +110,7 @@ function island() {
       if (!inIsland(x, z)) continue;
       const edge =
         Math.max(Math.abs(x), Math.abs(z)) >= GROUND - 1 ||
-        Math.abs(x) + Math.abs(z) >= 35;
+        Math.abs(x) + Math.abs(z) >= 43;
       setVoxel(x, 0, z, edge ? C.grassC : tones[Math.floor(rng() * tones.length)]);
     }
   }
@@ -133,7 +133,7 @@ function island() {
 }
 
 function path() {
-  for (let z = 7; z <= GROUND; z++) {
+  for (let z = 7; z <= 21; z++) {
     for (let x = -1; x <= 1; x++) setVoxel(x, 0, z, C.path);
     if (rng() < 0.85) setVoxel(-2, 0, z, C.pathEdge);
     if (rng() < 0.85) setVoxel(2, 0, z, C.pathEdge);
@@ -161,6 +161,10 @@ function pond() {
 /* ------------------------------------------------------------------ */
 
 function pagoda() {
+  // stone courtyard plaza around the platform
+  for (let x = -7; x <= 7; x++)
+    for (let z = -7; z <= 7; z++)
+      setVoxel(x, 1, z, rng() < 0.2 ? C.pathEdge : C.path);
   fillBox(-6, 1, -6, 6, 1, 6, C.stone); // stone platform
   fillBox(-1, 1, 7, 1, 1, 7, C.stone); // entrance step
 
@@ -224,7 +228,7 @@ function pagoda() {
 /* ------------------------------------------------------------------ */
 
 function torii() {
-  const z = 16;
+  const z = 20;
   for (const sx of [-3, 3]) fillBox(sx, 1, z, sx, 6, z, C.torii);
   fillBox(-5, 7, z, 5, 7, z, C.torii); // top beam
   setVoxel(-5, 8, z, C.torii); // upturned ends
@@ -297,12 +301,12 @@ function zenGarden() {
 
 function bambooGrove() {
   const spots = [
-    [-16, 16],
-    [-14, 16],
-    [-15, 14],
-    [-17, 15],
-    [-13, 17],
-    [-16, 13],
+    [-20, 20],
+    [-18, 20],
+    [-19, 18],
+    [-20, 17],
+    [-17, 21],
+    [-21, 19],
   ];
   for (const [bx, bz] of spots) {
     const h = 4 + Math.floor(rng() * 4);
@@ -340,6 +344,9 @@ const TREE_SPOTS = [
   [-15, -3, 3],
   [6, 15, 4],
   [16, 3, 3],
+  [18, 14, 4],
+  [-20, -14, 4],
+  [20, -18, 3],
 ];
 
 function blossomCanopy(x, y, z, r) {
@@ -386,7 +393,7 @@ function freeOfStructures(x, z) {
   if (Math.abs(x) <= 3 && z >= 6) return false; // path + gate
   if (((x - 14) / 6.2) ** 2 + ((z + 10) / 5.4) ** 2 <= 1.6) return false; // pond
   if (x >= 9 && x <= 14 && z >= -14 && z <= -2) return false; // bridge
-  if (Math.abs(z - 16) <= 1 && Math.abs(x) <= 6) return false; // torii
+  if (Math.abs(z - 20) <= 1 && Math.abs(x) <= 6) return false; // torii
   if (x >= -19 && x <= -9 && z >= 9 && z <= 17) return false; // zen garden
   if (x <= -14 && z >= 14) return false; // bamboo corner
   if (Math.abs(x) >= 4 && Math.abs(x) <= 6 && z >= 10 && z <= 16) return false; // flower beds
@@ -396,9 +403,9 @@ function freeOfStructures(x, z) {
 function scatter() {
   let placed = 0;
   let tries = 0;
-  while (placed < 26 && tries++ < 400) {
-    const x = Math.floor(rng() * 37) - 18;
-    const z = Math.floor(rng() * 37) - 18;
+  while (placed < 34 && tries++ < 500) {
+    const x = Math.floor(rng() * 45) - 22;
+    const z = Math.floor(rng() * 45) - 22;
     if (!freeOfStructures(x, z)) continue;
     if (TREE_SPOTS.some(([tx, tz]) => Math.abs(tx - x) + Math.abs(tz - z) < 3)) continue;
     if (LANTERN_SPOTS.some(([lx, lz]) => lx === x && lz === z)) continue;
