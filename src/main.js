@@ -226,6 +226,20 @@ viewButtons.forEach((btn) => {
   });
 });
 
+/* --------------------- tiny console playground --------------------- */
+/* Lets tinkerers (and the docs capture script) drive the scene from  */
+/* the browser console: window.garden.flyTo(...), .setDusk(true), ... */
+
+window.garden = {
+  camera,
+  controls,
+  renderer,
+  flyTo,
+  setDusk(on) {
+    themeTarget = on ? 1 : 0;
+  },
+};
+
 /* ---------------------------- resize ------------------------------ */
 
 window.addEventListener('resize', () => {
