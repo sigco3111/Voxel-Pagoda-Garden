@@ -69,6 +69,7 @@ const C = {
 /* ------------------------------------------------------------------ */
 
 const voxels = new Map();
+const waterVoxels = new Map();
 
 function setVoxel(x, y, z, color) {
   if (y < 0) return;
@@ -110,17 +111,15 @@ function pond() {
   for (let x = 4; x <= 18; x++) {
     for (let z = -14; z <= -2; z++) {
       const d = ((x - cx) / rx) ** 2 + ((z - cz) / rz) ** 2;
-      if (d <= 1) setVoxel(x, 0, z, rng() < 0.25 ? C.waterDeep : C.water);
+      if (d <= 1)
+        waterVoxels.set(`${x}|0|${z}`, rng() < 0.25 ? C.waterDeep : C.water);
       else if (d <= 1.45 && rng() < 0.9)
         setVoxel(x, 0, z, rng() < 0.5 ? C.stone : C.stoneDark);
     }
   }
-  // koi seen from above + lily pads
-  setVoxel(9, 0, -7, C.koi);
-  setVoxel(12, 0, -9, C.koi);
-  setVoxel(10, 0, -5, C.koi);
-  setVoxel(13, 0, -6, C.lily);
-  setVoxel(8, 0, -10, C.lily);
+  // lily pads resting on the surface
+  waterVoxels.set(`13|0|-6`, C.lily);
+  waterVoxels.set(`12|0|-12`, C.lily);
 }
 
 /* ------------------------------------------------------------------ */
@@ -387,10 +386,10 @@ function scatter() {
 /* Instancing: Map -> InstancedMesh with per-instance color           */
 /* ------------------------------------------------------------------ */
 
-function toInstancedMesh(map, jitter = 0) {
+function toInstancedMesh(map, jitter = 0, material = null) {
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  const mesh = new THREE.InstancedMesh(geometry, material, map.size);
+  const mat = material || new THREE.MeshLambertMaterial({ color: 0xffffff });
+  const mesh = new THREE.InstancedMesh(geometry, mat, map.size);
   const mtx = new THREE.Matrix4();
   const color = new THREE.Color();
   let i = 0;
@@ -433,6 +432,45 @@ function makeCloud(radius) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Swimming koi circling under the bridge                             */
+/* ------------------------------------------------------------------ */
+
+function createKoi(scene) {
+  const defs = [
+    { a: 3.0, b: 2.2, speed: 0.5, phase: 0.0, dir: 1 },
+    { a: 3.4, b: 2.5, speed: 0.38, phase: 2.4, dir: -1 },
+    { a: 2.5, b: 1.8, speed: 0.62, phase: 4.2, dir: 1 },
+  ];
+  const kois = defs.map((d) => {
+    const group = new THREE.Group();
+    const orange = new THREE.MeshLambertMaterial({ color: 0xf08a4b });
+    const cream = new THREE.MeshLambertMaterial({ color: 0xfaf3e6 });
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.32, 0.5), orange);
+    const patch = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.34, 0.52), cream);
+    patch.position.x = 0.28;
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.22, 0.26), orange);
+    tail.position.x = -0.75;
+    group.add(body, patch, tail);
+    group.traverse((o) => {
+      if (o.isMesh) o.castShadow = true;
+    });
+    scene.add(group);
+    return { group, ...d };
+  });
+  return function animateKoi(t) {
+    for (const k of kois) {
+      const ang = t * k.speed * k.dir + k.phase;
+      const x = 11 + k.a * Math.cos(ang);
+      const z = -8 + k.b * Math.sin(ang);
+      const vx = -k.a * Math.sin(ang) * k.dir;
+      const vz = k.b * Math.cos(ang) * k.dir;
+      k.group.position.set(x, 0.82 + Math.sin(t * 2 + k.phase) * 0.05, z);
+      k.group.rotation.y = Math.atan2(-vz, vx);
+    }
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /* Public API                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -452,6 +490,17 @@ export function buildWorld(scene) {
 
   scene.add(toInstancedMesh(voxels));
 
+  // translucent water surface, animated separately
+  const waterMaterial = new THREE.MeshLambertMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.85,
+  });
+  const waterMesh = toInstancedMesh(waterVoxels, 3.1, waterMaterial);
+  waterMesh.castShadow = false;
+  waterMesh.receiveShadow = true;
+  scene.add(waterMesh);
+
   // soft diorama base disc under the voxel island
   const base = new THREE.Mesh(
     new THREE.CircleGeometry(32, 64),
@@ -462,7 +511,12 @@ export function buildWorld(scene) {
   base.receiveShadow = true;
   scene.add(base);
 
-  const clouds = [];
+  const updates = [];
+  updates.push(function animateWater(t) {
+    waterMesh.position.y = Math.sin(t * 1.3) * 0.05;
+  });
+  updates.push(createKoi(scene));
+
   const defs = [
     { r: 4, y: 33, z: -13, offset: 6, speed: 1.1 },
     { r: 3, y: 36, z: 3, offset: 30, speed: 0.8 },
@@ -472,8 +526,10 @@ export function buildWorld(scene) {
     const mesh = makeCloud(d.r);
     mesh.position.set((d.offset % 64) - 32, d.y, d.z);
     scene.add(mesh);
-    clouds.push({ mesh, speed: d.speed, offset: d.offset });
+    updates.push(function animateCloud(t) {
+      mesh.position.x = ((t * d.speed + d.offset) % 64) - 32;
+    });
   }
 
-  return { voxelCount: voxels.size, clouds };
+  return { voxelCount: voxels.size + waterVoxels.size, updates };
 }

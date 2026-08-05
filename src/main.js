@@ -78,7 +78,7 @@ scene.add(sun);
 
 /* ----------------------------- world ------------------------------ */
 
-const { voxelCount, clouds } = buildWorld(scene);
+const { voxelCount, updates } = buildWorld(scene);
 
 /* --------------------------- dashboard ---------------------------- */
 
@@ -113,13 +113,14 @@ window.addEventListener('resize', () => {
 
 let frames = 0;
 let lastStats = performance.now();
+let lastT = 0;
 
 renderer.setAnimationLoop((time) => {
   const t = time / 1000;
+  const dt = Math.min(Math.max(t - lastT, 0), 0.05) || 0.016;
+  lastT = t;
 
-  for (const c of clouds) {
-    c.mesh.position.x = ((t * c.speed + c.offset) % 64) - 32;
-  }
+  for (const u of updates) u(t, dt);
 
   controls.update();
   renderer.render(scene, camera);
