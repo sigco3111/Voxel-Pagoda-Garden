@@ -615,7 +615,7 @@ function createKoi(scene) {
       const z = -8 + k.b * Math.sin(ang);
       const vx = -k.a * Math.sin(ang) * k.dir;
       const vz = k.b * Math.cos(ang) * k.dir;
-      k.group.position.set(x, 0.82 + Math.sin(t * 2 + k.phase) * 0.05, z);
+      k.group.position.set(x, 1.05 + Math.sin(t * 2 + k.phase) * 0.03, z);
       k.group.rotation.y = Math.atan2(-vz, vx);
     }
   };
@@ -645,7 +645,7 @@ export function buildWorld(scene) {
   const waterMaterial = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     transparent: true,
-    opacity: 0.85,
+    opacity: 0.75,
   });
   const waterMesh = toInstancedMesh(waterVoxels, 3.1, waterMaterial);
   waterMesh.castShadow = false;
@@ -661,7 +661,7 @@ export function buildWorld(scene) {
 
   const updates = [];
   updates.push(function animateWater(t) {
-    waterMesh.position.y = Math.sin(t * 1.3) * 0.05;
+    waterMesh.position.y = Math.sin(t * 1.3) * 0.04;
   });
   updates.push(createKoi(scene));
   updates.push(createPetals(scene));
