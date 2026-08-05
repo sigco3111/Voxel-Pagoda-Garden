@@ -67,7 +67,7 @@ controls.autoRotateSpeed = 0.6;
 const VIEWS = {
   overview: { p: HOME_POS, t: HOME_TARGET },
   pagoda: { p: new THREE.Vector3(13, 17, 26), t: new THREE.Vector3(0, 12, 1) },
-  pond: { p: new THREE.Vector3(22, 13, 2), t: new THREE.Vector3(11, 1, -8) },
+  pond: { p: new THREE.Vector3(25, 13, 0), t: new THREE.Vector3(14, 1, -10) },
   gate: { p: new THREE.Vector3(0, 6, 34), t: new THREE.Vector3(0, 7, 4) },
 };
 

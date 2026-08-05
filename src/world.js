@@ -141,9 +141,9 @@ function path() {
 }
 
 function pond() {
-  const cx = 11, cz = -8, rx = 5.2, rz = 4.4;
-  for (let x = 4; x <= 18; x++) {
-    for (let z = -14; z <= -2; z++) {
+  const cx = 14, cz = -10, rx = 5.2, rz = 4.4;
+  for (let x = 7; x <= 21; x++) {
+    for (let z = -17; z <= -3; z++) {
       const d = ((x - cx) / rx) ** 2 + ((z - cz) / rz) ** 2;
       if (d <= 1)
         waterVoxels.set(`${x}|0|${z}`, rng() < 0.25 ? C.waterDeep : C.water);
@@ -152,8 +152,8 @@ function pond() {
     }
   }
   // lily pads resting on the surface
-  waterVoxels.set(`13|0|-6`, C.lily);
-  waterVoxels.set(`12|0|-12`, C.lily);
+  waterVoxels.set(`16|0|-8`, C.lily);
+  waterVoxels.set(`15|0|-14`, C.lily);
 }
 
 /* ------------------------------------------------------------------ */
@@ -241,15 +241,15 @@ function bridge() {
   const heights = [1, 1, 2, 2, 3, 3, 3, 2, 2, 1, 1];
   heights.forEach((h, i) => {
     const z = -13 + i;
-    for (const x of [6, 7, 8, 9]) setVoxel(x, h, z, C.torii);
-    setVoxel(6, h + 1, z, C.bridgeDark);
-    setVoxel(9, h + 1, z, C.bridgeDark);
+    for (const x of [10, 11, 12, 13]) setVoxel(x, h, z, C.torii);
+    setVoxel(10, h + 1, z, C.bridgeDark);
+    setVoxel(13, h + 1, z, C.bridgeDark);
   });
   // stone piers standing in the water
-  setVoxel(7, 1, -11, C.stoneDark);
-  setVoxel(8, 1, -11, C.stoneDark);
-  setVoxel(7, 1, -5, C.stoneDark);
-  setVoxel(8, 1, -5, C.stoneDark);
+  setVoxel(11, 1, -11, C.stoneDark);
+  setVoxel(12, 1, -11, C.stoneDark);
+  setVoxel(11, 1, -5, C.stoneDark);
+  setVoxel(12, 1, -5, C.stoneDark);
 }
 
 /* ------------------------------------------------------------------ */
@@ -384,7 +384,8 @@ function lanterns() {
 function freeOfStructures(x, z) {
   if (Math.abs(x) <= 7 && Math.abs(z) <= 7) return false; // pagoda
   if (Math.abs(x) <= 3 && z >= 6) return false; // path + gate
-  if (((x - 11) / 6.2) ** 2 + ((z + 8) / 5.4) ** 2 <= 1.6) return false; // pond
+  if (((x - 14) / 6.2) ** 2 + ((z + 10) / 5.4) ** 2 <= 1.6) return false; // pond
+  if (x >= 9 && x <= 14 && z >= -14 && z <= -2) return false; // bridge
   if (Math.abs(z - 16) <= 1 && Math.abs(x) <= 6) return false; // torii
   if (x >= -19 && x <= -9 && z >= 9 && z <= 17) return false; // zen garden
   if (x <= -14 && z >= 14) return false; // bamboo corner
@@ -611,8 +612,8 @@ function createKoi(scene) {
   return function animateKoi(t) {
     for (const k of kois) {
       const ang = t * k.speed * k.dir + k.phase;
-      const x = 11 + k.a * Math.cos(ang);
-      const z = -8 + k.b * Math.sin(ang);
+      const x = 14 + k.a * Math.cos(ang);
+      const z = -10 + k.b * Math.sin(ang);
       const vx = -k.a * Math.sin(ang) * k.dir;
       const vz = k.b * Math.cos(ang) * k.dir;
       k.group.position.set(x, 1.05 + Math.sin(t * 2 + k.phase) * 0.03, z);
