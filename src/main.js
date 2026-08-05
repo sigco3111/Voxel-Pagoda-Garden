@@ -62,6 +62,58 @@ controls.maxPolarAngle = Math.PI * 0.49;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.6;
 
+/* ------------------------ camera fly-to tween ---------------------- */
+
+const VIEWS = {
+  overview: { p: HOME_POS, t: HOME_TARGET },
+  pagoda: { p: new THREE.Vector3(13, 17, 26), t: new THREE.Vector3(0, 12, 1) },
+  pond: { p: new THREE.Vector3(22, 13, 2), t: new THREE.Vector3(11, 1, -8) },
+  gate: { p: new THREE.Vector3(0, 6, 34), t: new THREE.Vector3(0, 7, 4) },
+};
+
+const camTween = {
+  active: false,
+  t: 0,
+  dur: 1.6,
+  fromP: new THREE.Vector3(),
+  toP: new THREE.Vector3(),
+  fromT: new THREE.Vector3(),
+  toT: new THREE.Vector3(),
+};
+
+function easeInOutCubic(k) {
+  return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+}
+
+function flyTo(p, target, dur = 1.6) {
+  camTween.fromP.copy(camera.position);
+  camTween.fromT.copy(controls.target);
+  camTween.toP.copy(p);
+  camTween.toT.copy(target);
+  camTween.dur = dur;
+  camTween.t = 0;
+  camTween.active = true;
+}
+
+function updateCameraTween(dt) {
+  if (!camTween.active) return;
+  camTween.t += dt / camTween.dur;
+  const k = easeInOutCubic(Math.min(camTween.t, 1));
+  camera.position.lerpVectors(camTween.fromP, camTween.toP, k);
+  controls.target.lerpVectors(camTween.fromT, camTween.toT, k);
+  camera.lookAt(controls.target);
+  if (camTween.t >= 1) camTween.active = false;
+}
+
+renderer.domElement.addEventListener('pointerdown', () => {
+  camTween.active = false;
+});
+
+// cinematic intro glide from high above
+camera.position.set(58, 42, 64);
+controls.target.copy(HOME_TARGET);
+flyTo(HOME_POS, HOME_TARGET, 2.8);
+
 /* ---------------------------- lights ------------------------------ */
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0xdfe5d2, 1.0);
@@ -164,6 +216,16 @@ btnDusk.addEventListener('click', () => {
   btnDusk.setAttribute('aria-pressed', String(themeTarget === 1));
 });
 
+const viewButtons = Array.from(document.querySelectorAll('[data-view]'));
+viewButtons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const view = VIEWS[btn.dataset.view];
+    if (!view) return;
+    flyTo(view.p, view.t);
+    viewButtons.forEach((b) => b.classList.toggle('active', b === btn));
+  });
+});
+
 /* ---------------------------- resize ------------------------------ */
 
 window.addEventListener('resize', () => {
@@ -185,8 +247,9 @@ renderer.setAnimationLoop((time) => {
 
   for (const u of updates) u(t, dt);
   applyTheme(dt);
+  updateCameraTween(dt);
 
-  controls.update();
+  if (!camTween.active) controls.update();
   renderer.render(scene, camera);
 
   frames++;

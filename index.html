@@ -50,6 +50,15 @@
         display: block; margin-top: 2px; font-size: 9px; color: var(--ink-soft);
         text-transform: uppercase; letter-spacing: 0.09em;
       }
+      .views { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+      .views button {
+        font: inherit; font-size: 10px; padding: 6px 2px;
+        color: var(--ink-soft); background: rgba(51, 65, 58, 0.05);
+        border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .views button:hover { color: var(--ink); background: rgba(51, 65, 58, 0.1); }
+      .views button.active { color: #fff; background: var(--ink); }
       .buttons { display: flex; gap: 8px; }
       .buttons button {
         flex: 1; font: inherit; font-size: 11px; padding: 7px 6px;
@@ -71,6 +80,12 @@
         font-size: 11.5px; color: var(--ink-soft); white-space: nowrap;
         user-select: none;
       }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .card { animation: rise 0.7s ease 0.15s both; }
+      #hint { animation: rise 0.7s ease 0.35s both; }
       @media (max-width: 560px) {
         .card { width: calc(100vw - 40px); }
         #hint { display: none; }
@@ -87,6 +102,12 @@
         <div class="stat"><span id="stat-voxels">&ndash;</span><label>voxels</label></div>
         <div class="stat"><span id="stat-fps">&ndash;</span><label>fps</label></div>
         <div class="stat"><span id="stat-draws">&ndash;</span><label>draws</label></div>
+      </div>
+      <div class="views">
+        <button data-view="overview" class="active">Overview</button>
+        <button data-view="pagoda">Pagoda</button>
+        <button data-view="pond">Pond</button>
+        <button data-view="gate">Gate</button>
       </div>
       <div class="buttons">
         <button id="btn-rotate" class="active" aria-pressed="true">Auto-rotate</button>
