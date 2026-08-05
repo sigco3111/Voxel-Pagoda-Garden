@@ -54,6 +54,13 @@ const C = {
   flowerB: 0xf6d789,
   rock: 0x9b958a,
   cloud: 0xffffff,
+  bridgeDark: 0x8f2f22,
+  gravelA: 0xe3dcc8,
+  gravelB: 0xd8cfb8,
+  gravelC: 0xcfc5ab,
+  bambooGreen: 0x7fae5a,
+  bambooNode: 0x99c76f,
+  bambooLeaf: 0x86bd63,
 };
 
 /* ------------------------------------------------------------------ */
@@ -194,6 +201,102 @@ function torii() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Arched red bridge over the pond                                    */
+/* ------------------------------------------------------------------ */
+
+function bridge() {
+  const heights = [1, 1, 2, 2, 3, 3, 3, 2, 2, 1, 1];
+  heights.forEach((h, i) => {
+    const z = -13 + i;
+    for (const x of [6, 7, 8, 9]) setVoxel(x, h, z, C.torii);
+    setVoxel(6, h + 1, z, C.bridgeDark);
+    setVoxel(9, h + 1, z, C.bridgeDark);
+  });
+  // stone piers standing in the water
+  setVoxel(7, 1, -11, C.stoneDark);
+  setVoxel(8, 1, -11, C.stoneDark);
+  setVoxel(7, 1, -5, C.stoneDark);
+  setVoxel(8, 1, -5, C.stoneDark);
+}
+
+/* ------------------------------------------------------------------ */
+/* Zen rock garden (karesansui) with raked gravel rings               */
+/* ------------------------------------------------------------------ */
+
+function zenGarden() {
+  for (let x = -18; x <= -10; x++)
+    for (let z = 10; z <= 16; z++) setVoxel(x, 0, z, C.gravelA);
+
+  // stone border
+  for (let x = -18; x <= -10; x++) {
+    setVoxel(x, 1, 10, C.stoneDark);
+    setVoxel(x, 1, 16, C.stoneDark);
+  }
+  for (let z = 11; z <= 15; z++) {
+    setVoxel(-18, 1, z, C.stoneDark);
+    setVoxel(-10, 1, z, C.stoneDark);
+  }
+
+  // rocks with concentric raked rings
+  const rocks = [
+    [-16, 13],
+    [-12, 12],
+    [-14, 15],
+  ];
+  for (const [rx, rz] of rocks) {
+    for (let dx = -2; dx <= 2; dx++)
+      for (let dz = -2; dz <= 2; dz++) {
+        const d = Math.max(Math.abs(dx), Math.abs(dz));
+        if (d === 0) continue;
+        const x = rx + dx;
+        const z = rz + dz;
+        if (x < -17 || x > -11 || z < 11 || z > 15) continue;
+        setVoxel(x, 0, z, d === 1 ? C.gravelB : C.gravelC);
+      }
+    setVoxel(rx, 1, rz, C.rock);
+    setVoxel(rx, 2, rz, C.stoneDark);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Bamboo grove in the far corner                                     */
+/* ------------------------------------------------------------------ */
+
+function bambooGrove() {
+  const spots = [
+    [-18, 18],
+    [-16, 18],
+    [-17, 16],
+    [-18, 15],
+    [-15, 19],
+    [-19, 17],
+  ];
+  for (const [bx, bz] of spots) {
+    const h = 4 + Math.floor(rng() * 4);
+    for (let y = 1; y <= h; y++)
+      setVoxel(bx, y, bz, y % 2 === 0 ? C.bambooNode : C.bambooGreen);
+    setVoxel(bx, h + 1, bz, C.bambooLeaf);
+    setVoxel(bx + (rng() < 0.5 ? 1 : -1), h, bz, C.bambooLeaf);
+    setVoxel(bx, h, bz + (rng() < 0.5 ? 1 : -1), C.bambooLeaf);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Flower beds along the entrance path                                */
+/* ------------------------------------------------------------------ */
+
+function flowerBeds() {
+  const tones = [0xe88fa6, 0xf6d789, 0xfaf7ef, 0xd96a8b, 0xf0a35e];
+  for (const side of [-1, 1]) {
+    for (const z of [11, 12, 13, 14, 15]) {
+      const x = side * (4 + Math.floor(rng() * 3));
+      setVoxel(x, 1, z, C.bushA);
+      setVoxel(x, 2, z, tones[Math.floor(rng() * tones.length)]);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Blossom trees, stone lanterns, bushes and rocks                    */
 /* ------------------------------------------------------------------ */
 
@@ -250,6 +353,9 @@ function freeOfStructures(x, z) {
   if (Math.abs(x) <= 3 && z >= 6) return false; // path + gate
   if (((x - 11) / 6.2) ** 2 + ((z + 8) / 5.4) ** 2 <= 1.6) return false; // pond
   if (Math.abs(z - 16) <= 1 && Math.abs(x) <= 6) return false; // torii
+  if (x >= -19 && x <= -9 && z >= 9 && z <= 17) return false; // zen garden
+  if (x <= -14 && z >= 14) return false; // bamboo corner
+  if (Math.abs(x) >= 4 && Math.abs(x) <= 6 && z >= 10 && z <= 16) return false; // flower beds
   return true;
 }
 
@@ -336,6 +442,10 @@ export function buildWorld(scene) {
   pond();
   pagoda();
   torii();
+  bridge();
+  zenGarden();
+  bambooGrove();
+  flowerBeds();
   trees();
   lanterns();
   scatter();
