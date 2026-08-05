@@ -70,6 +70,7 @@ const C = {
 
 const voxels = new Map();
 const waterVoxels = new Map();
+const glowVoxels = new Map();
 
 function setVoxel(x, y, z, color) {
   if (y < 0) return;
@@ -342,7 +343,7 @@ function lanterns() {
   for (const [x, z] of LANTERN_SPOTS) {
     setVoxel(x, 1, z, C.stoneDark);
     setVoxel(x, 2, z, C.lanternStone);
-    setVoxel(x, 3, z, C.lanternGlow);
+    glowVoxels.set(`${x}|3|${z}`, 0xffffff);
     setVoxel(x, 4, z, C.stoneDark);
   }
 }
@@ -494,6 +495,61 @@ function createPetals(scene, count = 220) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Fireflies drifting through the garden at dusk                     */
+/* ------------------------------------------------------------------ */
+
+function createFireflies(scene, count = 42) {
+  const geometry = new THREE.BoxGeometry(0.14, 0.14, 0.14);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffe08a,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+  });
+  const mesh = new THREE.InstancedMesh(geometry, material, count);
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+  mesh.visible = false;
+
+  const flies = [];
+  for (let i = 0; i < count; i++) {
+    flies.push({
+      x: (Math.random() * 2 - 1) * 18,
+      z: (Math.random() * 2 - 1) * 18,
+      y: 1.6 + Math.random() * 3.5,
+      freq: 0.4 + Math.random() * 0.8,
+      amp: 0.4 + Math.random() * 0.8,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+
+  const mtx = new THREE.Matrix4();
+  const pos = new THREE.Vector3();
+  const quat = new THREE.Quaternion();
+  const scl = new THREE.Vector3(1, 1, 1);
+
+  scene.add(mesh);
+
+  return {
+    mesh,
+    material,
+    update(t) {
+      for (let i = 0; i < count; i++) {
+        const f = flies[i];
+        pos.set(
+          f.x + Math.sin(t * f.freq + f.phase) * f.amp,
+          f.y + Math.sin(t * f.freq * 1.6 + f.phase * 2) * 0.5,
+          f.z + Math.cos(t * f.freq * 0.9 + f.phase) * f.amp
+        );
+        mtx.compose(pos, quat, scl);
+        mesh.setMatrixAt(i, mtx);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+    },
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /* Swimming koi circling under the bridge                             */
 /* ------------------------------------------------------------------ */
 
@@ -563,6 +619,13 @@ export function buildWorld(scene) {
   waterMesh.receiveShadow = true;
   scene.add(waterMesh);
 
+  // glowing lantern windows (unlit material so they always shine)
+  const glowMaterial = new THREE.MeshBasicMaterial({ color: 0xffc98a });
+  const glowMesh = toInstancedMesh(glowVoxels, 7.7, glowMaterial);
+  glowMesh.castShadow = false;
+  glowMesh.receiveShadow = false;
+  scene.add(glowMesh);
+
   // soft diorama base disc under the voxel island
   const base = new THREE.Mesh(
     new THREE.CircleGeometry(32, 64),
@@ -580,6 +643,16 @@ export function buildWorld(scene) {
   updates.push(createKoi(scene));
   updates.push(createPetals(scene));
 
+  const lanternLights = LANTERN_SPOTS.map(([x, z]) => {
+    const light = new THREE.PointLight(0xffb066, 0, 9, 2);
+    light.position.set(x, 4.6, z);
+    scene.add(light);
+    return light;
+  });
+
+  const fireflies = createFireflies(scene);
+  updates.push(fireflies.update);
+
   const defs = [
     { r: 4, y: 33, z: -13, offset: 6, speed: 1.1 },
     { r: 3, y: 36, z: 3, offset: 30, speed: 0.8 },
@@ -594,5 +667,14 @@ export function buildWorld(scene) {
     });
   }
 
-  return { voxelCount: voxels.size + waterVoxels.size, updates };
+  return {
+    voxelCount: voxels.size + waterVoxels.size + glowVoxels.size,
+    updates,
+    handles: {
+      lanternLights,
+      glowMaterial,
+      fireflyMaterial: fireflies.material,
+      fireflyMesh: fireflies.mesh,
+    },
+  };
 }
