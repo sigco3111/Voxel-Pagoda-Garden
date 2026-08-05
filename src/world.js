@@ -432,6 +432,68 @@ function makeCloud(radius) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Falling blossom petals swirling around the trees                   */
+/* ------------------------------------------------------------------ */
+
+function createPetals(scene, count = 220) {
+  const geometry = new THREE.BoxGeometry(0.32, 0.06, 0.22);
+  const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  const mesh = new THREE.InstancedMesh(geometry, material, count);
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+
+  const tones = [0xf3a7bb, 0xf8c6d2, 0xfde8ee, 0xf6b0c4];
+  const petals = [];
+  const color = new THREE.Color();
+
+  const resetPetal = (p, initial) => {
+    const [tx, tz] = TREE_SPOTS[(Math.random() * TREE_SPOTS.length) | 0];
+    p.bx = tx + (Math.random() - 0.5) * 7;
+    p.bz = tz + (Math.random() - 0.5) * 7;
+    p.y = initial ? 1.2 + Math.random() * 11 : 10 + Math.random() * 4;
+    p.speed = 0.45 + Math.random() * 0.7;
+    p.amp = 0.4 + Math.random() * 0.9;
+    p.freq = 0.7 + Math.random() * 1.1;
+    p.phase = Math.random() * Math.PI * 2;
+    p.spin = 0.6 + Math.random() * 1.6;
+  };
+
+  for (let i = 0; i < count; i++) {
+    const p = {};
+    resetPetal(p, true);
+    petals.push(p);
+    color.setHex(tones[i % tones.length]);
+    mesh.setColorAt(i, color);
+  }
+
+  const mtx = new THREE.Matrix4();
+  const pos = new THREE.Vector3();
+  const eul = new THREE.Euler();
+  const quat = new THREE.Quaternion();
+  const scl = new THREE.Vector3(1, 1, 1);
+
+  scene.add(mesh);
+
+  return function animatePetals(t, dt) {
+    for (let i = 0; i < count; i++) {
+      const p = petals[i];
+      p.y -= p.speed * dt;
+      if (p.y < 1.05) resetPetal(p, false);
+      pos.set(
+        p.bx + Math.sin(t * p.freq + p.phase) * p.amp,
+        p.y,
+        p.bz + Math.cos(t * p.freq * 0.8 + p.phase) * p.amp * 0.7
+      );
+      eul.set(t * p.spin, t * p.spin * 0.6 + p.phase, p.phase);
+      quat.setFromEuler(eul);
+      mtx.compose(pos, quat, scl);
+      mesh.setMatrixAt(i, mtx);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /* Swimming koi circling under the bridge                             */
 /* ------------------------------------------------------------------ */
 
@@ -516,6 +578,7 @@ export function buildWorld(scene) {
     waterMesh.position.y = Math.sin(t * 1.3) * 0.05;
   });
   updates.push(createKoi(scene));
+  updates.push(createPetals(scene));
 
   const defs = [
     { r: 4, y: 33, z: -13, offset: 6, speed: 1.1 },
