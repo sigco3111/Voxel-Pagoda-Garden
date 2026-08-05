@@ -61,6 +61,9 @@ const C = {
   bambooGreen: 0x7fae5a,
   bambooNode: 0x99c76f,
   bambooLeaf: 0x86bd63,
+  cliffDirt: 0x8a5a3b,
+  cliffDirtDark: 0x7a4e33,
+  cliffStone: 0x8f897d,
 };
 
 /* ------------------------------------------------------------------ */
@@ -73,7 +76,7 @@ const waterVoxels = new Map();
 const glowVoxels = new Map();
 
 function setVoxel(x, y, z, color) {
-  if (y < 0) return;
+  if (y < -4) return;
   voxels.set(`${x}|${y}|${z}`, color);
 }
 
@@ -92,11 +95,41 @@ function fillBox(x0, y0, z0, x1, y1, z1, color) {
 
 const GROUND = 20;
 
-function ground() {
+// rounded-square island mask (cuts the four corners diagonally)
+function inIsland(x, z, inset = 0) {
+  return (
+    Math.max(Math.abs(x), Math.abs(z)) <= GROUND - inset &&
+    Math.abs(x) + Math.abs(z) <= 36 - inset * 2
+  );
+}
+
+function island() {
   const tones = [C.grassA, C.grassA, C.grassB, C.grassC];
-  for (let x = -GROUND; x <= GROUND; x++)
-    for (let z = -GROUND; z <= GROUND; z++)
-      setVoxel(x, 0, z, tones[Math.floor(rng() * tones.length)]);
+  for (let x = -GROUND; x <= GROUND; x++) {
+    for (let z = -GROUND; z <= GROUND; z++) {
+      if (!inIsland(x, z)) continue;
+      const edge =
+        Math.max(Math.abs(x), Math.abs(z)) >= GROUND - 1 ||
+        Math.abs(x) + Math.abs(z) >= 35;
+      setVoxel(x, 0, z, edge ? C.grassC : tones[Math.floor(rng() * tones.length)]);
+    }
+  }
+
+  // cliff sides: two dirt layers over stone, tapering inward
+  const layers = [
+    { y: -1, inset: 0, color: () => (rng() < 0.5 ? C.cliffDirt : C.cliffDirtDark) },
+    { y: -2, inset: 1, color: () => (rng() < 0.6 ? C.cliffDirtDark : C.cliffStone) },
+    { y: -3, inset: 2, color: () => C.cliffStone },
+  ];
+  for (const layer of layers) {
+    for (let x = -GROUND; x <= GROUND; x++)
+      for (let z = -GROUND; z <= GROUND; z++) {
+        if (!inIsland(x, z, layer.inset)) continue;
+        setVoxel(x, layer.y, z, layer.color());
+        // rugged underside: occasional hanging rock
+        if (layer.y === -3 && rng() < 0.07) setVoxel(x, -4, z, C.cliffStone);
+      }
+  }
 }
 
 function path() {
@@ -264,12 +297,12 @@ function zenGarden() {
 
 function bambooGrove() {
   const spots = [
-    [-18, 18],
-    [-16, 18],
-    [-17, 16],
-    [-18, 15],
-    [-15, 19],
-    [-19, 17],
+    [-16, 16],
+    [-14, 16],
+    [-15, 14],
+    [-17, 15],
+    [-13, 17],
+    [-16, 13],
   ];
   for (const [bx, bz] of spots) {
     const h = 4 + Math.floor(rng() * 4);
@@ -593,7 +626,7 @@ function createKoi(scene) {
 /* ------------------------------------------------------------------ */
 
 export function buildWorld(scene) {
-  ground();
+  island();
   path();
   pond();
   pagoda();
@@ -625,16 +658,6 @@ export function buildWorld(scene) {
   glowMesh.castShadow = false;
   glowMesh.receiveShadow = false;
   scene.add(glowMesh);
-
-  // soft diorama base disc under the voxel island
-  const base = new THREE.Mesh(
-    new THREE.CircleGeometry(32, 64),
-    new THREE.MeshLambertMaterial({ color: 0xe9e5d9 })
-  );
-  base.rotation.x = -Math.PI / 2;
-  base.position.y = -0.02;
-  base.receiveShadow = true;
-  scene.add(base);
 
   const updates = [];
   updates.push(function animateWater(t) {
