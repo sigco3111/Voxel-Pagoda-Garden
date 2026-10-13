@@ -1,174 +1,166 @@
-# 🏯 Voxel Pagoda Garden
+# 🏯 복셀 탑 정원 (Voxel Pagoda Garden)
 
-*A serene Japanese garden diorama — five-tier pagoda, koi pond, blossom rain and
-lantern-lit dusk — built voxel by voxel and rendered with Three.js.*
+5층 탑, 잉어 연못, 흩날리는 벚꽃과 랜턴이 빛나는 석양을 감상하는 작은 3D 정원입니다. Three.js로 만든 일본식 정원 디오라마를 한국어로 즐길 수 있도록 옮겼습니다. 점수나 승패 없이 원하는 시점으로 천천히 둘러보세요.
 
-![Rotating overview of the voxel pagoda garden](docs/rotation.gif)
+[▶ 한국어 정원 열기](https://sigco3111.github.io/Voxel-Pagoda-Garden/) · [원작 저장소](https://github.com/JasonTM17/Voxel-Pagoda-Garden) · [원문 README](README.en.md)
 
-[**▶ Live demo on GitHub Pages**](https://jasontm17.github.io/Voxel-Pagoda-Garden/) ·
-[Gallery](#-gallery) · [Quick start](#-quick-start) · [Tech notes](#-tech-notes) ·
-[License](#-license)
+![정원 전체 모습](docs/overview-day.png)
 
-![Three.js](https://img.shields.io/badge/three.js-0.185-049ef4?style=flat-square)
-![Vite](https://img.shields.io/badge/bundled%20by-Vite-646cff?style=flat-square)
-![Voxels](https://img.shields.io/badge/voxels-11%2C552-c2503a?style=flat-square)
-![Draw calls](https://img.shields.io/badge/draw%20calls-~30-2e7d32?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-38b8b5?style=flat-square)
+> 위 이미지와 아래 갤러리는 원작의 캡처 자료입니다. 이미지에 포함된 영어 UI는 그대로 보존했으며, 실제 한국어 사이트의 제어판은 한글로 표시됩니다.
 
----
+## 🌸 무엇을 볼 수 있나요?
 
-## ✨ Features
+- **5층 탑**: 층층이 겹친 지붕, 들린 처마와 금빛 상륜이 섬 중앙의 돌마당에 서 있습니다.
+- **도리이와 진입로**: 일본식 정원의 입구 문과 꽃으로 장식한 긴 돌길을 볼 수 있습니다.
+- **잉어 연못**: 반투명한 수면, 수련 잎, 붉은 아치형 다리 아래로 헤엄치는 잉어 세 마리가 있습니다.
+- **벚꽃비**: 아홉 그루의 벚나무에서 220개의 꽃잎이 떨어집니다.
+- **돌 정원과 대나무 숲**: 자갈의 동심원 무늬와 바위, 대나무가 정원의 다른 부분을 채웁니다.
+- **석양 모드**: 하늘과 안개, 햇빛이 따뜻한 저녁색으로 바뀌며 랜턴과 반딧불이가 빛납니다.
+- **부드러운 카메라**: 시작할 때 정원으로 다가오고, 네 가지 시점 사이를 부드럽게 이동합니다.
+- **떠 있는 섬**: 흙 절벽과 울퉁불퉁한 바닥을 갖춘 하나의 섬 위에 정원이 배치됩니다.
 
-- 🏯 **Five-tier pagoda** with stepped roofs, upturned corner tips, pale trim
-  rings and a gold finial — dead centre of the island on a stone courtyard
-- ⛩️ **Torii gate** opening onto a long stone approach path lined with flowers
-- 🐟 **Living koi pond** — translucent bobbing water, lily pads and three koi
-  swimming laps under an arched red bridge with stone piers
-- 🌸 **Blossom rain** — 220 instanced petals tumbling from nine cherry trees
-- 🪨 **Zen rock garden** (karesansui) with raked gravel rings, plus a bamboo grove
-- 🏮 **Dusk mode** — one click lerps sky, fog, sun and hemisphere light to a warm
-  evening; lantern windows glow, point lights fade in and fireflies drift out
-- 🎥 **Cinematic camera** — intro fly-in on load and four eased presets
-  (Overview / Pagoda / Pond / Gate)
-- ☁️ Drifting voxel clouds casting slow moving shadows
-- 🏝️ One cohesive floating landmass with earthen cliff layers and a rugged underside
-- 🖥️ **Minimal light-theme dashboard** — live voxel count, FPS, draw calls,
-  view presets, auto-rotate and dusk toggles
+## 🎮 조작 방법
 
-## 🖼️ Gallery
+| 조작 / 버튼 | 기능 |
+|---|---|
+| 마우스 왼쪽 드래그 | 정원 주위를 회전 |
+| 마우스 휠 | 확대·축소 |
+| 마우스 오른쪽 드래그 | 화면 이동 |
+| **전체** | 섬 전체를 보는 시점 |
+| **탑** | 5층 탑을 가까이 보는 시점 |
+| **연못** | 잉어 연못과 붉은 다리를 보는 시점 |
+| **도리이** | 입구 문에서 돌길을 바라보는 시점 |
+| **자동 회전** | 천천히 도는 카메라 켜기·끄기 |
+| **시점 초기화** | 기본 카메라 위치로 복귀 |
+| **석양** | 낮과 저녁 사이 전환 |
 
-| Midday | Dusk |
+자동 회전과 석양 버튼은 활성화되면 색이 바뀝니다. 카메라 이동 중 직접 드래그하면 자동 이동이 중단되고 수동 조작으로 바뀝니다. 좁은 화면에서는 하단 마우스 조작 안내를 숨기지만 제어판은 유지됩니다.
+
+### 제어판 통계
+
+- **복셀 수**: 정원 구성에 사용한 복셀 개수입니다. 원작의 기본 정원은 11,552개입니다.
+- **초당 프레임**: 현재 브라우저에서 측정한 FPS입니다. 기기와 그래픽 환경에 따라 달라집니다.
+- **그리기 호출**: 렌더러의 프레임당 그리기 호출 수입니다. 그림자와 장면 상태에 따라 달라집니다.
+
+## 🖼️ 갤러리
+
+| 낮의 정원 | 석양의 정원 |
 |:---:|:---:|
-| ![Day overview](docs/overview-day.png) | ![Dusk overview](docs/overview-dusk.png) |
-| *The whole island: pagoda centred, torii south, pond east, zen garden north-west* | *Same island at dusk — lanterns lit, sky warm* |
+| ![낮의 전체 시점](docs/overview-day.png) | ![석양의 전체 시점](docs/overview-dusk.png) |
 
-| Pagoda preset | Pond preset | Gate preset |
+| 탑 | 연못 | 도리이 |
 |:---:|:---:|:---:|
-| ![Pagoda view](docs/pagoda.png) | ![Pond view](docs/pond.png) | ![Gate view](docs/gate.png) |
-| *The five tiers and gold finial* | *Koi circling under the arched bridge* | *Looking through the torii down the approach* |
+| ![탑 시점](docs/pagoda.png) | ![연못 시점](docs/pond.png) | ![도리이 시점](docs/gate.png) |
 
-![Pond at dusk](docs/pond-dusk.png)
-*The pond at dusk — glowing lantern windows and koi at the surface*
+![석양의 연못](docs/pond-dusk.png)
 
-### 🎬 Motion
-
-| | |
+| 자동 회전 | 낮에서 석양으로 |
 |:---:|:---:|
-| ![Rotation](docs/rotation.gif) | ![Dusk transition](docs/dusk-transition.gif) |
-| *Auto-orbit around the island* | *Day → dusk theme cross-fade* |
+| ![정원 자동 회전](docs/rotation.gif) | ![석양 전환](docs/dusk-transition.gif) |
 
-> Screenshots/GIFs were captured headless with software WebGL, so the FPS chip
-> in them reads low — on any real GPU the scene runs at a smooth 60 fps.
+원작 캡처는 소프트웨어 WebGL 환경에서 생성되어 FPS가 낮게 표시될 수 있습니다. 실제 성능은 기기의 GPU, 화면 크기와 브라우저에 따라 달라지므로 고정된 FPS를 보장하지 않습니다.
 
-## 🚀 Quick start
+## 🇰🇷 한국어화 범위
+
+- 페이지 언어(`lang="ko"`), 제목과 검색용 설명
+- 제어판 이름과 접근성 이름, 통계 이름
+- 카메라 시점 네 가지, 자동 회전·초기화·석양 버튼
+- 하단 마우스 조작 안내
+- **Noto Sans KR** 웹폰트와 시스템 한글 폰트 대체 설정
+- 이 README와 한국어 리포지토리 설명
+
+원작의 객체 이름·ID·코드 주석·LICENSE·저작자 표시는 바꾸지 않았습니다. 원문 README는 `README.en.md`로 보존했습니다. 원작 이미지/GIF 안의 영어는 이미지 자료의 일부라 그대로 유지합니다. 3D 장면과 카메라·애니메이션 동작도 원작을 유지합니다.
+
+## 🚀 로컬 실행
+
+Node.js와 npm이 필요합니다. Vite 8의 요구 사항에 맞는 Node.js 20.19 이상 또는 22.12 이상을 사용하세요.
 
 ```bash
-git clone https://github.com/JasonTM17/Voxel-Pagoda-Garden.git
+git clone https://github.com/sigco3111/Voxel-Pagoda-Garden.git
 cd Voxel-Pagoda-Garden
-npm install
-npm run dev        # → http://localhost:5173
+npm ci
+npm run dev
 ```
 
-Production build:
+터미널에 표시되는 개발 서버 주소를 브라우저에서 여세요. 기본 주소는 `http://localhost:5173`이며 사용 중인 포트가 있으면 달라질 수 있습니다.
+
+### 빌드와 미리보기
 
 ```bash
-npm run build      # → dist/
-npm run preview    # serve the production build locally
+npm run build      # dist/ 생성
+npm run preview    # 빌드 결과 로컬 미리보기
+npm run build:pages # docs/에 Pages용 빌드 생성, 기존 갤러리 자료 유지
 ```
 
-## 🎮 Controls
+HTML 파일을 더블클릭하는 대신 개발 서버나 빌드 미리보기를 사용하세요. 모듈과 패키지 경로는 Vite가 처리합니다. 사이트는 정적 배포이며 별도 게임 서버나 로그인 없이 감상할 수 있습니다.
 
-| Input | Action |
-| --- | --- |
-| Left-drag | Orbit around the island |
-| Scroll | Zoom |
-| Right-drag | Pan |
-| `Overview / Pagoda / Pond / Gate` | Smooth eased camera presets |
-| `Auto-rotate` | Toggle the slow orbit |
-| `Reset view` | Snap back to the home shot |
-| `Dusk` | Cross-fade day ↔ lantern-lit evening |
+## 📁 파일 구성
 
-A tiny console playground is exposed for tinkerers:
+```text
+├── index.html            # 한국어 페이지와 제어판, 폰트 설정
+├── README.md             # 한국어 안내
+├── README.en.md          # 원작 영어 안내
+├── LICENSE               # 원작 MIT 라이선스
+├── package.json          # 개발·빌드 명령
+├── package-lock.json     # 의존성 잠금 파일
+├── vite.config.js        # 상대 경로 base: './'
+├── src/
+│   ├── main.js           # 렌더러, 조명, 카메라, 낮/석양, 제어판
+│   └── world.js          # 복셀 정원 생성과 애니메이션
+├── scripts/
+│   └── capture-media.mjs # 원작 캡처 자료 생성 스크립트
+└── docs/                 # Pages 빌드와 원작 이미지·GIF
+```
+
+## 🧱 구현 메모
+
+정원은 시드 기반 생성기(`mulberry32`)로 만들어져 매번 같은 배치를 보여줍니다. 지형·건축·식물 복셀 외에 꽃잎 220개, 반딧불이 42개, 잉어 3마리와 구름 3개를 애니메이션합니다.
+
+복셀은 인스턴스 렌더링으로 묶고, 수면·꽃잎·랜턴·반딧불이·구름은 별도 묶음으로 처리합니다. 낮과 석양은 하늘, 안개, 태양과 환경광을 점진적으로 섞습니다. 카메라는 위치와 목표점을 부드럽게 보간합니다. 런타임 라이브러리는 Three.js이며 Vite는 개발·빌드용입니다.
+
+개발자용 콘솔 인터페이스는 원작과 같습니다.
 
 ```js
-garden.flyTo(new THREE.Vector3(20, 12, 20), new THREE.Vector3(0, 8, 0));
 garden.setDusk(true);
 garden.controls.autoRotateSpeed = 3;
 ```
 
-## 🗺️ The grounds
+정원 배치나 그래픽 구현을 바꿀 때는 `src/world.js`, 카메라·조명·제어판 동작은 `src/main.js`를 확인하세요.
 
-```
-        🎋 bamboo (south-west corner)
-  🪨 zen garden (north-west)
-                 ┌───────────────┐
-                 │ 🌸   🏯    🌸  │  five-tier pagoda on a stone
-                 │ 🏮  plaza  🏮 │  courtyard, centred at (0,0)
-                 │ 🌸   │     🌸 │
-                 │      │       │ 🐟 koi pond + red bridge (east)
-                 │ 🌸   │    🌸 │
-                 │      ⛩️      │  torii gate, long approach path
-                 └───────────────┘
-   one floating landmass, ±24 voxels, three earthen cliff layers
-```
+## 🌐 GitHub Pages 배포
 
-Everything is placed by a **seeded** generator (`mulberry32`), so the garden
-is identical on every load: 11,552 voxels of terrain, architecture and flora,
-plus 220 petals, 42 fireflies, 3 koi and 3 clouds as animated actors.
+이 포크는 `main` 브랜치의 `/docs` 폴더를 GitHub Pages로 제공합니다.
 
-## 🧱 Tech notes
+1. `index.html` 또는 `src/`를 수정합니다.
+2. `npm ci` 후 `npm run build:pages`를 실행합니다.
+3. 생성된 `docs/index.html`과 `docs/assets/` 변경 사항을 함께 커밋합니다.
+4. 저장소의 **Settings → Pages → Deploy from a branch → main → /docs** 설정을 확인합니다.
+5. Pages 배포가 끝난 뒤 한국어 정원 링크에서 확인합니다.
 
-- **One voxel map → one `InstancedMesh`** with per-instance colors and a subtle
-  hash-based tonal jitter; water, lantern glow, petals, fireflies and clouds
-  get their own small instanced batches. The whole frame is ~30 draw calls
-  including the shadow pass.
-- **Animation** runs through a single `updates(t, dt)` array: water bob, koi
-  orbits steered along their heading, petal fall/sway/tumble, cloud drift,
-  firefly wander — zero allocations per frame.
-- **Day/dusk** is a damped scalar mix that lerps sky gradient stops (a 2×512
-  canvas repainted while transitioning), fog color/range, sun & hemisphere
-  colors, intensities and sun position, lantern point-light intensity and the
-  glow tint every frame.
-- **Koi without flicker** — they ride the surface so backs stay above and
-  bellies below the bobbing water plane; no coplanar z-fighting.
-- **Camera tween** eases position + orbit target with cubic in-out; any
-  pointer-down cancels it for instant manual control.
-- **Shadows**: a single 2048² PCF-soft directional map over a ±40 frustum;
-  clouds cast slow moving shadows across the garden.
-- Zero runtime dependencies beyond `three`; Vite is the only dev tooling.
+`vite.config.js`의 `base: './'`로 자산 경로가 상대 경로이므로 프로젝트 이름이 붙는 Pages에서도 동작합니다. 소스만 수정하고 `docs/`를 다시 빌드하지 않으면 배포 화면은 바뀌지 않습니다.
 
-## 📁 Project structure
-
-```
-├── index.html               # page shell + light-theme dashboard UI
-├── vite.config.js           # base './' so the build also runs on GitHub Pages
-├── scripts/
-│   └── capture-media.mjs    # puppeteer + gifenc docs media generator
-├── src/
-│   ├── main.js              # renderer, lights, camera, theme system, dashboard
-│   └── world.js             # seeded voxel world builder + animated actors
-└── docs/                    # screenshots, GIFs and the GitHub Pages build
-```
-
-## 📸 Regenerating the docs media
+## 📸 원작 캡처 자료 재생성
 
 ```bash
-npm run dev                        # terminal 1
+npm run dev
+# 별도 터미널에서 실행
 npm i --no-save puppeteer gifenc pngjs
-npm run capture                    # terminal 2 → writes docs/*.png / *.gif
+npm run capture
 ```
 
-## 🌐 GitHub Pages
+캡처 스크립트와 의존성은 원작의 개발 도구입니다. 실행하면 `docs/` 이미지·GIF가 갱신될 수 있으므로 변경 내용을 확인한 후 커밋하세요.
 
-`docs/` also holds a relative-base production build (`npm run build:pages`),
-served as the live demo from the `docs/` folder of `main`:
-**https://jasontm17.github.io/Voxel-Pagoda-Garden/**
+## ⚠️ 참고 사항
 
-## 📄 License
+- WebGL을 지원하는 최신 브라우저가 필요합니다. 소프트웨어 렌더링이나 저사양 기기에서는 프레임이 낮아질 수 있습니다.
+- Google Fonts에 연결할 수 없으면 기기의 기본 한글 폰트로 표시됩니다.
+- 원작의 잠금 파일에 대해 `npm audit`가 개발 도구의 간접 의존성 `nanoid`, `source-map-js`에서 높은 심각도의 문제 2건을 보고했습니다(2026-10-13 확인). 이 한글화는 의존성을 임의로 업그레이드하지 않았습니다. 개발 서버를 외부에 노출하기 전에 최신 보안 권고와 업데이트를 검토하세요. Pages는 빌드된 정적 파일을 제공합니다.
+- 원작에는 별도의 자동 테스트 명령이 없습니다. 빌드 성공과 실제 브라우저 표시를 기준으로 확인합니다.
 
-MIT © 2026 JasonTM17 (Nguyen Son) — see [LICENSE](LICENSE).
-The garden is generated at runtime; no external art assets are used.
+## 📄 원작과 라이선스
 
----
+원작: [JasonTM17/Voxel-Pagoda-Garden](https://github.com/JasonTM17/Voxel-Pagoda-Garden)
 
-*Made with 🍵 and Three.js — enjoy the garden.*
+**MIT License · Copyright (c) 2026 JasonTM17 (Nguyen Son)**
+
+[LICENSE](LICENSE)의 원문과 저작권 고지를 그대로 유지했습니다. 이 저장소는 원작의 한국어화 포크이며, 원작자 공식 한국어 배포판이 아닙니다. 정원 그래픽은 코드로 생성되고 외부 미술 에셋은 사용하지 않습니다.
