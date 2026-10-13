@@ -1,9 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Voxel Pagoda Garden</title>
+    <title>복셀 탑 정원</title>
+    <meta name="description" content="5층 탑, 잉어 연못, 벚꽃비와 석양을 감상하는 Three.js 복셀 정원. 한국어 버전." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         --ink: #33413a;
@@ -15,7 +19,7 @@
       * { box-sizing: border-box; }
       html, body { height: 100%; margin: 0; }
       body {
-        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
         color: var(--ink);
         background: #f2f3ee;
         overflow: hidden;
@@ -61,7 +65,7 @@
       .views button.active { color: #fff; background: var(--ink); }
       .buttons { display: flex; gap: 8px; }
       .buttons button {
-        flex: 1; font: inherit; font-size: 11px; padding: 7px 6px;
+        flex: 1; white-space: nowrap; font: inherit; font-size: 11px; padding: 7px 6px;
         color: var(--ink); background: #fff;
         border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
         transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -95,28 +99,28 @@
   <body>
     <canvas id="scene"></canvas>
 
-    <aside class="card" aria-label="Dashboard">
-      <div class="title">Voxel Pagoda Garden</div>
-      <div class="subtitle">Three.js &middot; voxel diorama</div>
+    <aside class="card" aria-label="정원 제어판">
+      <div class="title">복셀 탑 정원</div>
+      <div class="subtitle">Three.js &middot; 복셀 디오라마</div>
       <div class="stats">
-        <div class="stat"><span id="stat-voxels">&ndash;</span><label>voxels</label></div>
-        <div class="stat"><span id="stat-fps">&ndash;</span><label>fps</label></div>
-        <div class="stat"><span id="stat-draws">&ndash;</span><label>draws</label></div>
+        <div class="stat"><span id="stat-voxels">&ndash;</span><label>복셀 수</label></div>
+        <div class="stat"><span id="stat-fps">&ndash;</span><label>초당 프레임</label></div>
+        <div class="stat"><span id="stat-draws">&ndash;</span><label>그리기 호출</label></div>
       </div>
       <div class="views">
-        <button data-view="overview" class="active">Overview</button>
-        <button data-view="pagoda">Pagoda</button>
-        <button data-view="pond">Pond</button>
-        <button data-view="gate">Gate</button>
+        <button data-view="overview" class="active">전체</button>
+        <button data-view="pagoda">탑</button>
+        <button data-view="pond">연못</button>
+        <button data-view="gate">도리이</button>
       </div>
       <div class="buttons">
-        <button id="btn-rotate" class="active" aria-pressed="true">Auto-rotate</button>
-        <button id="btn-reset">Reset view</button>
-        <button id="btn-dusk" aria-pressed="false">Dusk</button>
+        <button id="btn-rotate" class="active" aria-pressed="true">자동 회전</button>
+        <button id="btn-reset">시점 초기화</button>
+        <button id="btn-dusk" aria-pressed="false">석양</button>
       </div>
     </aside>
 
-    <div id="hint">Drag to orbit &middot; Scroll to zoom &middot; Right-drag to pan</div>
+    <div id="hint">드래그: 회전 &middot; 휠: 확대·축소 &middot; 오른쪽 드래그: 이동</div>
 
     <script type="module" src="/src/main.js"></script>
   </body>
